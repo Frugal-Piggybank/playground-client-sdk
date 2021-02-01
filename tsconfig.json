@@ -11,5 +11,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": true
   },
-  "exclude": ["__tests__/**/*", "dist/**/*", "node_modules"]
+  "exclude": ["__tests__/**/*", "dist", "node_modules"]
 }

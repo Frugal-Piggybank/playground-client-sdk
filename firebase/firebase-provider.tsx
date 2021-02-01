@@ -39,15 +39,17 @@ const initialState: FirebaseContextProps = {
     console.log('initializing');
   },
   setMessage: (message: string) => {
-    console.log('initializing');
+    console.log(`initializing ${message}`);
   },
   clearMessage: () => {
     console.log('initializing');
   },
   registerAsync: async (email: string, password: string) => {
+    console.log(`initializing ${email} ${password}`);
     return undefined;
   },
   loginAsync: async (email: string, password: string) => {
+    console.log(`initializing ${email} ${password}`);
     return undefined;
   },
   logoutAsync: async () => {
