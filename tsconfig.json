@@ -9,7 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "noUnusedLocals": false,
-    "noUnusedParameters": true
+    "noUnusedParameters": false
   },
-  "exclude": ["__tests__/**/*", "dist", "node_modules"]
+  "exclude": ["__tests__/**/*", "**/dist", "**/node_modules"]
 }

@@ -8,6 +8,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true, // Allows for the parsing of JSX
     },
+    project: './tsconfig.json',
   },
   settings: {
     react: {
@@ -23,5 +24,11 @@ module.exports = {
       },
     },
   },
-  rules: {},
+  rules: {
+    'implicit-arrow-linebreak': 0,
+    'no-unused-vars': 0,
+    '@typescript-eslint/no-unused-vars': 0,
+    '@typescript-eslint/comma-dangle': 0,
+    'react/prop-types': 0,
+  },
 };

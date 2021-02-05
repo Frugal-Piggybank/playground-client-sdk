@@ -1,10 +1,10 @@
 {
   "name": "@Frugal-Piggybank/playground-client-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "yarn eslint --ext .js,.jsx,.ts,.tsx  .",
+    "lint": "yarn eslint --ext .js,.jsx,.ts,.tsx .",
     "build": "tsc"
   },
   "repository": "git@github.com:Frugal-Piggybank/playground-client-sdk.git",

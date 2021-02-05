@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import fb from 'firebase';
 // import { useMutation } from 'react-apollo';
 // import { auth } from '.';
@@ -12,7 +12,7 @@ interface FirebaseProviderProps {
 
 interface FirebaseContextProps {
   isAuthenticated: boolean;
-  currentUser?: fb.User;
+  currentUser?: fb.User | null;
   loading: boolean;
   message: string;
   destroySession: () => void;
@@ -35,37 +35,19 @@ const initialState: FirebaseContextProps = {
   isAuthenticated: false,
   loading: true,
   message: 'initializing',
-  destroySession: () => {
-    console.log('initializing');
-  },
-  setMessage: (message: string) => {
-    console.log(`initializing ${message}`);
-  },
-  clearMessage: () => {
-    console.log('initializing');
-  },
-  registerAsync: async (email: string, password: string) => {
-    console.log(`initializing ${email} ${password}`);
-    return undefined;
-  },
-  loginAsync: async (email: string, password: string) => {
-    console.log(`initializing ${email} ${password}`);
-    return undefined;
-  },
-  logoutAsync: async () => {
-    return undefined;
-  },
-  deleteAccountAsync: async () => {
-    return undefined;
-  },
-  forceRefresh: () => {
-    console.log('initializing');
-  },
+  destroySession: () => {},
+  setMessage: (message: string) => {},
+  clearMessage: () => {},
+  registerAsync: async (email: string, password: string) => undefined,
+  loginAsync: async (email: string, password: string) => undefined,
+  logoutAsync: async () => undefined,
+  deleteAccountAsync: async () => undefined,
+  forceRefresh: () => {},
 };
 
 const FirebaseContext = React.createContext<FirebaseContextProps>(initialState);
 export const useFirebase = (): FirebaseContextProps =>
-  React.useContext(FirebaseContext);
+  useContext(FirebaseContext);
 
 const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
@@ -73,7 +55,7 @@ const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   config,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<fb.User>();
+  const [currentUser, setCurrentUser] = useState<fb.User | null>();
   const [loading, setLoading] = useState<boolean>(true);
   const [message, setMessage] = useState('');
   const [auth, setAuth] = useState<fb.auth.Auth>();
@@ -85,10 +67,23 @@ const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     setAuth(fb.auth());
   }, []);
 
+  useEffect(() => {
+    auth?.onAuthStateChanged((user: fb.User | null): void => {
+      if (user) {
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        setLoading(false);
+      } else {
+        setIsAuthenticated(false);
+        setLoading(false);
+      }
+    });
+  }, [currentUser]);
+
   const forceRefresh = (): void => {
     const updatedUser = auth?.currentUser;
 
-    if (updatedUser) setCurrentUser(updatedUser);
+    setCurrentUser(updatedUser);
   };
 
   const deleteAccountAsync = async (): Promise<void> => {
@@ -106,19 +101,6 @@ const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     forceRefresh();
   };
 
-  useEffect(() => {
-    auth?.onAuthStateChanged((user: fb.User | null): void => {
-      if (user) {
-        setCurrentUser(user);
-        setIsAuthenticated(true);
-        setLoading(false);
-      } else {
-        setIsAuthenticated(false);
-        setLoading(false);
-      }
-    });
-  }, [currentUser]);
-
   return (
     <FirebaseContext.Provider
       value={{
@@ -135,12 +117,12 @@ const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           email: string,
           password: string
         ): Promise<fb.auth.UserCredential | undefined> =>
-          await auth?.createUserWithEmailAndPassword(email, password),
+          auth?.createUserWithEmailAndPassword(email, password),
         loginAsync: async (
           email: string,
           password: string
         ): Promise<fb.auth.UserCredential | undefined> =>
-          await auth?.signInWithEmailAndPassword(email, password),
+          auth?.signInWithEmailAndPassword(email, password),
         logoutAsync,
         deleteAccountAsync,
         forceRefresh,
