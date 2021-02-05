@@ -18,14 +18,8 @@ interface FirebaseContextProps {
   destroySession: () => void;
   setMessage: (message: string) => void;
   clearMessage: () => void;
-  registerAsync: (
-    email: string,
-    password: string
-  ) => Promise<fb.auth.UserCredential | undefined>;
-  loginAsync: (
-    email: string,
-    password: string
-  ) => Promise<fb.auth.UserCredential | undefined>;
+  registerAsync: (email: string, password: string) => Promise<void>;
+  loginAsync: (email: string, password: string) => Promise<void>;
   logoutAsync: () => Promise<void>;
   deleteAccountAsync: () => Promise<void>;
   forceRefresh: () => void;
@@ -116,13 +110,14 @@ const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         registerAsync: async (
           email: string,
           password: string
-        ): Promise<fb.auth.UserCredential | undefined> =>
-          auth?.createUserWithEmailAndPassword(email, password),
-        loginAsync: async (
-          email: string,
-          password: string
-        ): Promise<fb.auth.UserCredential | undefined> =>
-          auth?.signInWithEmailAndPassword(email, password),
+        ): Promise<void> => {
+          await auth?.createUserWithEmailAndPassword(email, password);
+          forceRefresh();
+        },
+        loginAsync: async (email: string, password: string): Promise<void> => {
+          await auth?.signInWithEmailAndPassword(email, password);
+          forceRefresh();
+        },
         logoutAsync,
         deleteAccountAsync,
         forceRefresh,
